@@ -6,3 +6,5 @@ DROP TABLE IF EXISTS appleshop.baskets;
 DROP TABLE IF EXISTS appleshop.products;
 DROP TABLE IF EXISTS appleshop.categories;
 DROP TABLE IF EXISTS appleshop.users;
+
+DROP SCHEMA IF EXISTS appleshop;
