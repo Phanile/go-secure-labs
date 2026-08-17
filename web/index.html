@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AppleShop</title>
+
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+
+<header class="header">
+    <div class="container header__inner">
+
+        <a href="/" class="logo">
+            AppleShop
+        </a>
+
+        <nav class="nav">
+            <a href="/" class="nav__link nav__link--active">
+                Главная
+            </a>
+
+            <a href="#" class="nav__link">
+                Каталог
+            </a>
+
+            <a href="#" class="nav__link">
+                Корзина
+            </a>
+
+            <a href="#" class="nav__link">
+                Войти
+            </a>
+        </nav>
+
+    </div>
+</header>
+
+
+<main>
+
+    <section class="hero">
+        <div class="container">
+            <h1 class="hero__title">
+                Техника Apple
+            </h1>
+
+            <p class="hero__subtitle">
+                Оригинальные устройства по отличным ценам
+            </p>
+        </div>
+    </section>
+
+
+    <section class="products-section">
+
+        <div class="container">
+
+            <div class="section-header">
+                <h2 class="section-title">
+                    Товары
+                </h2>
+
+                <div id="products-count" class="products-count"></div>
+            </div>
+
+
+            <div
+                id="products"
+                class="products-grid"
+            >
+                <!-- Products will be rendered here -->
+            </div>
+
+
+            <div
+                id="products-loading"
+                class="products-state"
+            >
+                Загрузка товаров...
+            </div>
+
+
+            <div
+                id="products-error"
+                class="products-state products-state--error hidden"
+            >
+                Не удалось загрузить товары.
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<footer class="footer">
+    <div class="container">
+        <p>
+            © 2026 AppleShop
+        </p>
+    </div>
+</footer>
+
+
+<script src="/js/app.js" defer></script>
+
+</body>
+</html>
