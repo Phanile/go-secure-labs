@@ -2,13 +2,14 @@ include .env
 export
 
 APP_NAME := go-secure-labs
-CMD_FILE := ./cmd/main.go
 PROJECT_ROOT := $(shell pwd)
+CMD_FILE := ${PROJECT_ROOT}/cmd/main.go
+LOGGER_FOLDER := ${PROJECT_ROOT}/out/logs
 
 .PHONY: build run test
 
 run:
-	@go run $(CMD_FILE)
+	go run $(CMD_FILE)
 
 env-up:
 	@docker compose up -d postgres

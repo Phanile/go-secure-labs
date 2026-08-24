@@ -3,18 +3,29 @@ package main
 import (
 	"context"
 	"fmt"
-	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 
+	products_transport_http "github.com/Phanile/go-secure-labs/internal/features/products/transport/http"
+	"github.com/Phanile/go-secure-labs/internal/logger"
+	http_server "github.com/Phanile/go-secure-labs/internal/transport/http/server"
 	"github.com/Phanile/go-secure-labs/seed"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"go.uber.org/zap"
 )
 
 func main() {
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer cancel()
+
+	logger, err := logger.NewLogger(logger.NewConfigMust())
+
+	if err != nil {
+		fmt.Println("failed to init app logger: ", err)
+		os.Exit(1)
+	}
+	defer logger.Close()
 
 	connectionString := fmt.Sprintf("postgres://%s:%s@postgres:5432/%s?sslmode=disable",
 		os.Getenv("POSTGRES_USER"),
@@ -32,23 +43,20 @@ func main() {
 		panic(err)
 	}
 
-	fileServer := http.FileServer(http.Dir("./web"))
-	http.Handle("/", fileServer)
+	productsTransportHTTP := products_transport_http.NewProductsHTTPHandler(nil)
 
-	server := &http.Server{
-		Addr: ":5252",
+	productsRoutes := productsTransportHTTP.Routes()
+
+	apiProductsRouter := http_server.NewAPIVersionRouter(http_server.APIVersion1)
+	apiProductsRouter.RegisterRoutes(productsRoutes...)
+
+	httpServer := http_server.NewHTTPServer(http_server.NewConfigMust(), logger)
+	httpServer.RegisterAPIRouters(apiProductsRouter)
+	httpServer.RegisterStatic("/", "./web")
+
+	if err := httpServer.Run(ctx); err != nil {
+		logger.Error("HTTP server run: ", zap.Error(err))
 	}
 
-	go func() {
-		if err := server.ListenAndServe(); err != nil {
-			panic(err)
-		}
-	}()
-
 	<-ctx.Done()
-	shutdown()
-}
-
-func shutdown() {
-	fmt.Println("graceful shutdown...")
 }
