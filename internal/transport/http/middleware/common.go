@@ -37,12 +37,12 @@ func Logger(l *logger.Logger) Middleware {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-			logger := l.Logger.With(
+			l.Logger.With(
 				zap.String("request_id", r.Header.Get(requestIdHeader)),
 				zap.String("url", r.URL.String()),
 			)
 
-			ctx := context.WithValue(r.Context(), logKeyForContext, logger)
+			ctx := context.WithValue(r.Context(), logKeyForContext, l)
 
 			next.ServeHTTP(w, r.WithContext(ctx))
 		})

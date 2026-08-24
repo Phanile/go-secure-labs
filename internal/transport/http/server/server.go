@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/Phanile/go-secure-labs/internal/logger"
+	http_middleware "github.com/Phanile/go-secure-labs/internal/transport/http/middleware"
 	"go.uber.org/zap"
 )
 
@@ -14,13 +15,16 @@ type HTTPServer struct {
 	mux    *http.ServeMux
 	logger *logger.Logger
 	config Config
+
+	middlewares []http_middleware.Middleware
 }
 
-func NewHTTPServer(config Config, log *logger.Logger) *HTTPServer {
+func NewHTTPServer(config Config, log *logger.Logger, middlewares ...http_middleware.Middleware) *HTTPServer {
 	return &HTTPServer{
-		mux:    http.NewServeMux(),
-		config: config,
-		logger: log,
+		mux:         http.NewServeMux(),
+		config:      config,
+		logger:      log,
+		middlewares: middlewares,
 	}
 }
 
@@ -41,7 +45,7 @@ func (s *HTTPServer) RegisterStatic(path, dir string) {
 func (s *HTTPServer) Run(ctx context.Context) error {
 	server := &http.Server{
 		Addr:    s.config.Addr,
-		Handler: s.mux,
+		Handler: http_middleware.ChainMiddleware(s.mux, s.middlewares...),
 	}
 
 	ch := make(chan error, 1)

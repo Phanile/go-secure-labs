@@ -9,7 +9,7 @@ LOGGER_FOLDER := ${PROJECT_ROOT}/out/logs
 .PHONY: build run test
 
 run:
-	go run $(CMD_FILE)
+	@go run $(CMD_FILE)
 
 env-up:
 	@docker compose up -d postgres

@@ -9,6 +9,7 @@ import (
 
 	products_transport_http "github.com/Phanile/go-secure-labs/internal/features/products/transport/http"
 	"github.com/Phanile/go-secure-labs/internal/logger"
+	http_middleware "github.com/Phanile/go-secure-labs/internal/transport/http/middleware"
 	http_server "github.com/Phanile/go-secure-labs/internal/transport/http/server"
 	"github.com/Phanile/go-secure-labs/seed"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -39,9 +40,13 @@ func main() {
 	}
 	defer pool.Close()
 
+	logger.Info("successfully connect to database...")
+
 	if err := seed.RunSeed(ctx, pool); err != nil {
 		panic(err)
 	}
+
+	logger.Info("successfully seed data...")
 
 	productsTransportHTTP := products_transport_http.NewProductsHTTPHandler(nil)
 
@@ -50,13 +55,23 @@ func main() {
 	apiProductsRouter := http_server.NewAPIVersionRouter(http_server.APIVersion1)
 	apiProductsRouter.RegisterRoutes(productsRoutes...)
 
-	httpServer := http_server.NewHTTPServer(http_server.NewConfigMust(), logger)
+	httpServer := http_server.NewHTTPServer(
+		http_server.NewConfigMust(),
+		logger,
+		http_middleware.RequestID(),
+		http_middleware.Logger(logger),
+		http_middleware.Panic(),
+		http_middleware.Trace(),
+	)
+
 	httpServer.RegisterAPIRouters(apiProductsRouter)
 	httpServer.RegisterStatic("/", "./web")
 
 	if err := httpServer.Run(ctx); err != nil {
 		logger.Error("HTTP server run: ", zap.Error(err))
 	}
+
+	logger.Info("successfuly run http server...")
 
 	<-ctx.Done()
 }
