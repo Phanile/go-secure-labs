@@ -1,6 +1,11 @@
 package domain
 
-import "time"
+import (
+	"fmt"
+	"time"
+
+	core_errors "github.com/Phanile/go-secure-labs/internal/errors"
+)
 
 type Product struct {
 	Id            int64
@@ -52,4 +57,16 @@ func NewProduct(id int64,
 		CreatedAt:     time.Now(),
 		UpdatedAt:     time.Now(),
 	}
+}
+
+func (p Product) Validate() error {
+	if p.Price <= 0 {
+		return fmt.Errorf("validate product price %d must be > 0: %w", p.Price, core_errors.ErrInvalidArgument)
+	}
+
+	if p.StockQuantity < 0 {
+		return fmt.Errorf("validate product StockQuantity %d must be >= 0: %w", p.StockQuantity, core_errors.ErrInvalidArgument)
+	}
+
+	return nil
 }
