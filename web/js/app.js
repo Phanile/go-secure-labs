@@ -1,4 +1,4 @@
-const API_URL = "/api/products";
+const API_URL = "/api/v1/products";
 
 
 const productsContainer =

@@ -14,6 +14,7 @@ type ProductsHTTPHandler struct {
 
 type ProductsService interface {
 	CreateProduct(ctx context.Context, product domain.Product) (domain.Product, error)
+	GetProducts(ctx context.Context) ([]domain.Product, error)
 }
 
 func NewProductsHTTPHandler(productsService ProductsService) *ProductsHTTPHandler {
@@ -28,6 +29,11 @@ func (h *ProductsHTTPHandler) Routes() []http_server.Route {
 			Method:  http.MethodPost,
 			Path:    "/products",
 			Handler: h.CreateProduct,
+		},
+		{
+			Method:  http.MethodGet,
+			Path:    "/products",
+			Handler: h.GetProducts,
 		},
 	}
 }

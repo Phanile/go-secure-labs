@@ -7,5 +7,7 @@ type ProductsRepository struct {
 }
 
 func NewProductsRepository(p core_postgres_pool.Pool) *ProductsRepository {
-	return &ProductsRepository{}
+	return &ProductsRepository{
+		pool: p,
+	}
 }

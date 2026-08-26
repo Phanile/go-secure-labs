@@ -60,15 +60,3 @@ func domainFromDTO(dto CreateProductRequest) domain.Product {
 		dto.ImageUrl,
 	)
 }
-
-func dtoFromDomain(product domain.Product) CreateProductResponse {
-	return CreateProductResponse{
-		Id:            product.Id,
-		Name:          product.Name,
-		Description:   product.Description,
-		Price:         product.Price,
-		StockQuantity: product.StockQuantity,
-		CategoryId:    product.CategoryId,
-		ImageUrl:      product.ImageUrl,
-	}
-}

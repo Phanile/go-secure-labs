@@ -3,10 +3,10 @@ package seed
 import (
 	"context"
 
-	"github.com/jackc/pgx/v5/pgxpool"
+	core_postgres_pool "github.com/Phanile/go-secure-labs/internal/repository/postgres/pool"
 )
 
-func RunSeed(ctx context.Context, pool *pgxpool.Pool) error {
+func RunSeed(ctx context.Context, pool *core_postgres_pool.ConnectionPool) error {
 	tx, err := pool.Begin(ctx)
 	if err != nil {
 		return err

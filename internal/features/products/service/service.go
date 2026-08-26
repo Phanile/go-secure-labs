@@ -12,6 +12,7 @@ type ProductsService struct {
 
 type ProductsRepository interface {
 	CreateProduct(ctx context.Context, product domain.Product) (domain.Product, error)
+	GetProducts(ctx context.Context) ([]domain.Product, error)
 }
 
 func NewProductsService(productsRepository ProductsRepository) *ProductsService {
