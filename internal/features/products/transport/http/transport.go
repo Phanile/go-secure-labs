@@ -35,5 +35,10 @@ func (h *ProductsHTTPHandler) Routes() []http_server.Route {
 			Path:    "/products",
 			Handler: h.GetProducts,
 		},
+		{
+			Method:  http.MethodGet,
+			Path:    "/vulnerable/products",
+			Handler: h.GetProducts,
+		},
 	}
 }
