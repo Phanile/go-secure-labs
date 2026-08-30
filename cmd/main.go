@@ -8,6 +8,7 @@ import (
 	"syscall"
 
 	products_postgres_repository "github.com/Phanile/go-secure-labs/internal/features/products/repository/postgres"
+	products_postgres_vulnerable_repository "github.com/Phanile/go-secure-labs/internal/features/products/repository/postgres/vulnerable"
 	products_service "github.com/Phanile/go-secure-labs/internal/features/products/service"
 	products_transport_http "github.com/Phanile/go-secure-labs/internal/features/products/transport/http"
 	"github.com/Phanile/go-secure-labs/internal/logger"
@@ -43,7 +44,10 @@ func main() {
 	}
 
 	productsRepository := products_postgres_repository.NewProductsRepository(pool)
+	productsVulnerableRepository := products_postgres_vulnerable_repository.NewProductsVulnerableRepository(pool)
+
 	productsService := products_service.NewProductsService(productsRepository)
+	productsVulnerableService := products_service.NewProductsService(productsVulnerableRepository)
 
 	httpServer := http_server.NewHTTPServer(
 		http_server.NewConfigMust(),
@@ -55,9 +59,11 @@ func main() {
 	)
 
 	productsTransportHTTP := products_transport_http.NewProductsHTTPHandler(productsService)
+	productsVulnerableTransportHTTP := products_transport_http.NewProductsHTTPHandler(productsVulnerableService)
 
 	apiProductsRouter := http_server.NewAPIVersionRouter(http_server.APIVersion1)
 	apiProductsRouter.RegisterRoutes(productsTransportHTTP.Routes()...)
+	apiProductsRouter.RegisterRoutes(productsVulnerableTransportHTTP.VulnerableRoutes()...)
 
 	httpServer.RegisterAPIRouters(apiProductsRouter)
 	httpServer.RegisterStatic("/", "./web")

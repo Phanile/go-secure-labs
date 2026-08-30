@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/Phanile/go-secure-labs/internal/domain"
+	products_service "github.com/Phanile/go-secure-labs/internal/features/products/service"
 	"github.com/Phanile/go-secure-labs/internal/logger"
 	http_response "github.com/Phanile/go-secure-labs/internal/transport/http/response"
 )
@@ -27,7 +28,11 @@ func (h *ProductsHTTPHandler) GetProducts(w http.ResponseWriter, r *http.Request
 	log := logger.FromContext(ctx)
 	responseHandler := http_response.NewHTTPResponseHandler(log, w)
 
-	products, err := h.productsService.GetProducts(ctx)
+	filter := products_service.ProductFilter{
+		Search: r.URL.Query().Get("search"),
+	}
+
+	products, err := h.productsService.GetProducts(ctx, filter)
 
 	if err != nil {
 		responseHandler.ErrorResponse(err, "failed to get products")

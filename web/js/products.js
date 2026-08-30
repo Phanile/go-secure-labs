@@ -50,21 +50,13 @@ function createProductCard(product) {
     return card;
 }
 
-function filterProducts(products, search) {
-    const query = search.trim().toLocaleLowerCase();
-    if (!query) return products;
-    return products.filter((product) => `${product.name} ${product.description ?? ""}`
-        .toLocaleLowerCase().includes(query));
-}
-
 export async function loadProducts(search = "") {
     loadingElement.classList.remove("hidden");
     errorElement.classList.add("hidden");
     try {
         const products = await fetchProducts(search);
-        const filteredProducts = filterProducts(products, search);
-        productsContainer.replaceChildren(...filteredProducts.map(createProductCard));
-        productsCountElement.textContent = `${filteredProducts.length} товаров`;
+        productsContainer.replaceChildren(...products.map(createProductCard));
+        productsCountElement.textContent = `${products.length} товаров`;
     } catch (error) {
         console.error("Failed to load products:", error);
         errorElement.classList.remove("hidden");

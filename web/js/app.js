@@ -3,7 +3,6 @@ import { loadProducts } from "./products.js";
 
 const modeToggle = document.getElementById("mode-toggle");
 const modeLabel = document.getElementById("mode-label");
-const modeBadge = document.getElementById("mode-badge");
 const searchInput = document.getElementById("products-search");
 const searchButton = document.getElementById("products-search-button");
 
@@ -11,9 +10,6 @@ function updateModeControls(mode) {
     const vulnerable = mode === MODES.VULNERABLE;
     modeToggle.checked = vulnerable;
     modeLabel.textContent = vulnerable ? "Vulnerable" : "Secure";
-    modeBadge.textContent = vulnerable
-        ? "🟩 VULNERABLE MODE — Training Lab Enabled"
-        : "🟦 SECURE MODE";
     modeToggle.setAttribute("aria-label", `Switch to ${vulnerable ? "secure" : "vulnerable"} mode`);
 }
 

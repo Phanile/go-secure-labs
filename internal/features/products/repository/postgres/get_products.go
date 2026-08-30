@@ -5,15 +5,31 @@ import (
 	"fmt"
 
 	"github.com/Phanile/go-secure-labs/internal/domain"
+	products_service "github.com/Phanile/go-secure-labs/internal/features/products/service"
+	"github.com/jackc/pgx/v5"
 )
 
-func (r *ProductsRepository) GetProducts(ctx context.Context) ([]domain.Product, error) {
+func (r *ProductsRepository) GetProducts(ctx context.Context, filter products_service.ProductFilter) ([]domain.Product, error) {
 	ctx, cancel := context.WithTimeout(ctx, r.pool.OpTimeout())
 	defer cancel()
 
-	query := `SELECT id, name, description, price, stock_quantity, category_id, image_url FROM appleshop.products`
+	var query string
+	var rows pgx.Rows
+	var err error
+	if filter.Search != "" {
+		query =
+			`SELECT id, name, description, price, stock_quantity, category_id, image_url 
+			FROM appleshop.products
+			WHERE name ILIKE $1`
 
-	rows, err := r.pool.Query(ctx, query)
+		rows, err = r.pool.Query(ctx, query, "%"+filter.Search+"%")
+	} else {
+		query = `
+			SELECT id, name, description, price, stock_quantity, category_id, image_url 
+			FROM appleshop.products`
+
+		rows, err = r.pool.Query(ctx, query)
+	}
 
 	if err != nil {
 		return []domain.Product{}, fmt.Errorf("getproducts: %w", err)

@@ -218,18 +218,6 @@ a {
     outline-offset: 3px;
 }
 
-.mode-badge {
-    min-height: 24px;
-    padding-top: 16px;
-    color: var(--accent);
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.7px;
-    text-transform: uppercase;
-    transition: color 0.3s ease;
-}
-
-
 /* =========================
    Hero
    ========================= */
@@ -506,7 +494,7 @@ body[data-mode="vulnerable"] a:hover {
     color: var(--accent);
 }
 
-body[data-mode="vulnerable"] .mode-badge {
+body[data-mode="vulnerable"] {
     text-shadow: 0 0 10px rgba(0, 255, 102, 0.45);
 }
 
