@@ -63,3 +63,13 @@ migrate-action:
 
 deploy:
 	@docker compose up -d --build go-secure-labs
+
+semgrep-common:
+	@mkdir -p security/reports
+	@echo "Running static common analysis with semgrep..."
+	@docker compose run --rm --user "$$(id -u):$$(id -g)" semgrep semgrep scan --config p/owasp-top-ten --json -o /src/security/reports/semgrep-common.json /src
+
+semgrep-go:
+	@mkdir -p security/reports
+	@echo "Running static Go analysis with semgrep..."
+	@docker compose run --rm --user "$$(id -u):$$(id -g)" semgrep semgrep scan --config p/gosec --json -o /src/security/reports/semgrep-go.json /src

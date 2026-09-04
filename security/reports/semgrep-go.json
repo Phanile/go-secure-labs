@@ -1,0 +1,120 @@
+{
+    "version": "1.137.0",
+    "results": [],
+    "errors": [],
+    "paths": {
+        "scanned": [
+            "/src/cmd/main.go",
+            "/src/internal/domain/address.go",
+            "/src/internal/domain/basket.go",
+            "/src/internal/domain/basket_item.go",
+            "/src/internal/domain/category.go",
+            "/src/internal/domain/order.go",
+            "/src/internal/domain/order_item.go",
+            "/src/internal/domain/product.go",
+            "/src/internal/domain/uninitialized.go",
+            "/src/internal/domain/user.go",
+            "/src/internal/errors/common.go",
+            "/src/internal/features/products/repository/postgres/create_product.go",
+            "/src/internal/features/products/repository/postgres/get_products.go",
+            "/src/internal/features/products/repository/postgres/models.go",
+            "/src/internal/features/products/repository/postgres/repository.go",
+            "/src/internal/features/products/repository/postgres/vulnerable/create_product.go",
+            "/src/internal/features/products/repository/postgres/vulnerable/get_products.go",
+            "/src/internal/features/products/repository/postgres/vulnerable/repository.go",
+            "/src/internal/features/products/service/create_product.go",
+            "/src/internal/features/products/service/get_products.go",
+            "/src/internal/features/products/service/service.go",
+            "/src/internal/features/products/transport/http/create_product.go",
+            "/src/internal/features/products/transport/http/get_products.go",
+            "/src/internal/features/products/transport/http/transport.go",
+            "/src/internal/logger/config.go",
+            "/src/internal/logger/logger.go",
+            "/src/internal/repository/postgres/pool/config.go",
+            "/src/internal/repository/postgres/pool/pool.go",
+            "/src/internal/transport/http/middleware/common.go",
+            "/src/internal/transport/http/middleware/middleware.go",
+            "/src/internal/transport/http/request/decode.go",
+            "/src/internal/transport/http/response/handler.go",
+            "/src/internal/transport/http/server/config.go",
+            "/src/internal/transport/http/server/route.go",
+            "/src/internal/transport/http/server/router.go",
+            "/src/internal/transport/http/server/server.go",
+            "/src/seed/categories.go",
+            "/src/seed/products.go",
+            "/src/seed/seed.go"
+        ]
+    },
+    "time": {
+        "rules": [],
+        "rules_parse_time": 0.011224031448364258,
+        "profiling_times": {
+            "config_time": 0.5828232765197754,
+            "core_time": 0.19842147827148438,
+            "ignores_time": 5.8650970458984375e-05,
+            "total_time": 0.7815992832183838
+        },
+        "parsing_time": {
+            "total_time": 0.0,
+            "per_file_time": {
+                "mean": 0.0,
+                "std_dev": 0.0
+            },
+            "very_slow_stats": {
+                "time_ratio": 0.0,
+                "count_ratio": 0.0
+            },
+            "very_slow_files": []
+        },
+        "scanning_time": {
+            "total_time": 0.18567442893981934,
+            "per_file_time": {
+                "mean": 0.004760882793328701,
+                "std_dev": 3.250053238691794e-05
+            },
+            "very_slow_stats": {
+                "time_ratio": 0.0,
+                "count_ratio": 0.0
+            },
+            "very_slow_files": []
+        },
+        "matching_time": {
+            "total_time": 0.0,
+            "per_file_and_rule_time": {
+                "mean": 0.0,
+                "std_dev": 0.0
+            },
+            "very_slow_stats": {
+                "time_ratio": 0.0,
+                "count_ratio": 0.0
+            },
+            "very_slow_rules_on_files": []
+        },
+        "tainting_time": {
+            "total_time": 0.0,
+            "per_def_and_rule_time": {
+                "mean": 0.0,
+                "std_dev": 0.0
+            },
+            "very_slow_stats": {
+                "time_ratio": 0.0,
+                "count_ratio": 0.0
+            },
+            "very_slow_rules_on_defs": []
+        },
+        "fixpoint_timeouts": [],
+        "prefiltering": {
+            "project_level_time": 0.0,
+            "file_level_time": 0.0,
+            "rules_with_project_prefilters_ratio": 0.0,
+            "rules_with_file_prefilters_ratio": 1.0,
+            "rules_selected_ratio": 0.017837235228539576,
+            "rules_matched_ratio": 0.017837235228539576
+        },
+        "targets": [],
+        "total_bytes": 0,
+        "max_memory_bytes": 97254144
+    },
+    "engine_requested": "OSS",
+    "skipped_rules": []
+}

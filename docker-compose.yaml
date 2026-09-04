@@ -41,3 +41,11 @@ services:
     container_name: go-secure-labs-postgres-migrate
     depends_on:
       - postgres
+
+  semgrep:
+    image: semgrep/semgrep:1.137.0
+    container_name: go-secure-labs-semgrep
+    volumes:
+      - ${PROJECT_ROOT}:/src
+    working_dir: /src
+    
