@@ -14,9 +14,13 @@ run:
 
 env-up:
 	@docker compose up -d postgres
+	@docker compose up -d postgres-migrate
+	@docker compose up -d semgrep
 
 env-down:
 	@docker compose down postgres
+	@docker compose down postgres-migrate
+	@docker compose down semgrep
 
 env-clean:
 	@read -p "Are you sure you want to delete the database data? (y/n): " answer; \
@@ -40,7 +44,7 @@ migrate:
 	postgres-migrate \
 	create \
 	-ext sql \
-	-dir /migrations \
+	-dir /migratio	ns \
 	-seq "$(seq)"
 	
 migrate-up:
