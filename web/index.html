@@ -14,7 +14,7 @@
 <header class="header">
     <div class="container header__inner">
 
-        <a href="/" class="logo">
+        <a href="#/store" class="logo">
             AppleShop
         </a>
 
@@ -34,20 +34,20 @@
         </div>
 
         <nav class="nav">
-            <a href="/" class="nav__link nav__link--active">
-                Главная
+            <a href="#/store" class="nav__link nav__link--active" data-route-link="store">
+                Магазин
             </a>
 
-            <a href="#" class="nav__link">
-                Каталог
+            <a href="#/products" class="nav__link" data-route-link="products">
+                Товары
             </a>
 
-            <a href="#" class="nav__link">
-                Корзина
+            <a href="#/labs" class="nav__link" data-route-link="labs">
+                Security Labs
             </a>
 
-            <a href="#" class="nav__link">
-                Войти
+            <a href="#/about" class="nav__link" data-route-link="about">
+                О проекте
             </a>
         </nav>
 
@@ -64,7 +64,7 @@
 
 
 <main>
-    <section class="hero">
+    <section class="hero" id="store-view" data-view="store">
         <div class="container">
             <h1 class="hero__title">
                 Техника Apple
@@ -76,7 +76,7 @@
         </div>
     </section>
 
-    <section class="products-section">
+    <section class="products-section" id="products-view" data-view="store products">
 
         <div class="container">
 
@@ -114,6 +114,20 @@
 
         </div>
 
+    </section>
+
+    <section class="labs-view hidden" id="labs-view" data-view="labs">
+        <div class="container" id="labs-content"></div>
+    </section>
+
+    <section class="about-view hidden" id="about-view" data-view="about">
+        <div class="container about-card">
+            <p class="eyebrow">AppleShop / Security Education</p>
+            <h1>Учебная лаборатория безопасности</h1>
+            <p>AppleShop совмещает обычный магазин и изолированную площадку для изучения OWASP Top 10:2025.</p>
+            <p>Используйте только локальное тестовое окружение. Уязвимый режим нельзя публиковать в интернете и нельзя использовать с настоящими персональными или конфиденциальными данными.</p>
+            <a class="primary-button" href="#/labs">Открыть Security Labs</a>
+        </div>
     </section>
 
 </main>
