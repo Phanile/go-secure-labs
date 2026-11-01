@@ -116,6 +116,27 @@ Request: `{ "scenario": "timeout|dependency_error|invalid_state" }`.
 
 Response details: `{ "handled": true, "fail_mode": "closed|open", "status": 503, "error_id": "...", "sensitive_details_exposed": false }`. Secure behavior fails closed and returns bounded diagnostics; vulnerable behavior demonstrates unsafe exception handling. Errors: `400`, `500`, with no stack traces or secrets in the response.
 
+## PortSwigger topic contracts
+
+These are proposed frontend integration contracts for the PortSwigger topic pages. They are not currently implemented routes. The pages display them as `Backend Integration Pending` and never send requests until the project owner adds the corresponding Go handlers. `{modePrefix}` is empty in Secure Mode and `/vulnerable` in Vulnerable Mode.
+
+| Topic | Method and path | Example request |
+| --- | --- | --- |
+| Authentication | `POST /api/v1{modePrefix}/labs/authentication/check` | `{ "username": "demo-user", "password": "test-only-password" }` |
+| Path traversal | `GET /api/v1{modePrefix}/labs/path-traversal/read?path=images/iphone.jpg` | `path=images/iphone.jpg` |
+| Command injection | `POST /api/v1{modePrefix}/labs/command-injection/execute` | `{ "host": "example.test" }` |
+| Business logic vulnerabilities | `POST /api/v1{modePrefix}/labs/design/cart-check` | `{ "product_id": 1, "quantity": 1, "discount": "TEST10", "total": 100 }` |
+| Information disclosure | `GET /api/v1{modePrefix}/labs/information-disclosure/inspect?resource=product-details` | `resource=product-details` |
+| Access control | `POST /api/v1{modePrefix}/labs/access-control/check` | `{ "resource_id": "1001", "subject": "demo-user", "action": "read" }` |
+| File upload vulnerabilities | `POST /api/v1{modePrefix}/labs/file-upload/inspect` | `{ "filename": "avatar.png", "content_type": "image/png" }` |
+| Race conditions | `POST /api/v1{modePrefix}/labs/race-conditions/check` | `{ "operation": "redeem", "token": "TEST10" }` |
+| Server-side request forgery (SSRF) | `POST /api/v1{modePrefix}/labs/ssrf/fetch` | `{ "url": "https://example.test/health" }` |
+| XXE injection | `POST /api/v1{modePrefix}/labs/xxe/parse` | `<order><item>demo</item></order>` |
+| NoSQL injection | `POST /api/v1{modePrefix}/labs/nosql-injection/query` | `{ "username": "demo-user", "password": "test-only-password" }` |
+| API testing | `POST /api/v1{modePrefix}/labs/api-testing/inspect` | `{ "path": "/api/v1/products", "method": "GET" }` |
+
+For these proposed routes, the response should use the common envelope above and return the real HTTP status/body from the backend. Secure behavior should enforce the relevant control; vulnerable behavior may demonstrate the intentionally unsafe implementation. Expected errors are the common `400`, `401`, `403`, `404`, `409`, `422`, `429`, and `500` responses appropriate to the operation. No response is fabricated by the frontend.
+
 ## Frontend integration rules
 
 The shared API module owns the mode prefix. Individual lab views must use the central contract and must not hardcode secure/vulnerable decisions. A missing route is not a successful exploit: the UI must retain the pending state until the backend is available.

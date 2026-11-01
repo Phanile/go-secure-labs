@@ -1,6 +1,6 @@
-import { runProductSearch } from "./api.js";
 import { AppMode } from "./mode.js";
 import { getLab, LABS } from "./lab-data.js";
+import { bindProductSearchDemo, productSearchDemoMarkup } from "./lab-demo.js";
 
 const content = document.getElementById("labs-content");
 const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" })[char]);
@@ -31,11 +31,7 @@ function pendingDemo(lab) {
 }
 
 function sqlDemo() {
-    return `<section class="demo-panel"><div class="demo-panel__heading"><div><p class="eyebrow">Practical demonstration / live endpoint</p><h2>Product search</h2></div><span class="status status--implemented">Backend connected</span></div>
-        <p>Submit a search value to the current global mode. The response below is the backend’s actual response; the frontend never labels a payload as successful unless the server responds.</p>
-        <form id="sql-demo-form" class="demo-form"><label for="sql-demo-input">Search input</label><div class="input-row"><input id="sql-demo-input" placeholder="Try a normal product search" autocomplete="off"><button class="primary-button" type="submit">Send request</button></div></form>
-        <div id="sql-demo-result" class="response-viewer" aria-live="polite"><span class="muted">No request sent yet.</span></div>
-        <div class="contract-note"><code>${esc(AppMode.isVulnerable() ? "/api/v1/vulnerable/products?search=..." : "/api/v1/products?search=...")}</code><span>Secure mode uses a parameterized query; vulnerable mode routes to the intentionally unsafe repository.</span></div></section>`;
+    return productSearchDemoMarkup({ prefix: "owasp-sql-demo" });
 }
 
 function renderOverview() {
@@ -46,20 +42,7 @@ function renderOverview() {
 
 function renderDetail(lab) {
     content.innerHTML = `<div class="lab-detail">${header(lab)}${infoPanel(lab)}${lab.id === "A05" ? sqlDemo() : pendingDemo(lab)}</div>`;
-    if (lab.id === "A05") document.getElementById("sql-demo-form").addEventListener("submit", handleSqlDemo);
-}
-
-async function handleSqlDemo(event) {
-    event.preventDefault();
-    const input = document.getElementById("sql-demo-input");
-    const result = document.getElementById("sql-demo-result");
-    result.innerHTML = `<span class="loading-dot">Sending request in ${AppMode.current} mode…</span>`;
-    try {
-        const response = await runProductSearch(input.value);
-        result.innerHTML = `<div class="response-meta"><span class="result-indicator ${response.status >= 200 && response.status < 300 ? "result-indicator--success" : "result-indicator--error"}">${response.status >= 200 && response.status < 300 ? "HTTP success" : "HTTP error"}</span><span>Status ${response.status}</span></div><pre>${esc(JSON.stringify(response.body, null, 2))}</pre>`;
-    } catch (error) {
-        result.innerHTML = `<div class="result-indicator result-indicator--error">Request failed</div><pre>${esc(error.message)}</pre>`;
-    }
+    if (lab.id === "A05") bindProductSearchDemo({ prefix: "owasp-sql-demo" });
 }
 
 export function renderLabs(labId = null) {
