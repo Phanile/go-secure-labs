@@ -9,6 +9,10 @@ export function getApiBaseUrl() {
     return `${API_PATH}${modePrefix}`;
 }
 
+export function getApiRoot() {
+    return API_PATH;
+}
+
 export class ApiError extends Error {
     constructor(message, status, body = null) {
         super(message);
@@ -18,9 +22,11 @@ export class ApiError extends Error {
     }
 }
 
-export async function requestApi(path, options = {}) {
-    const response = await fetch(`${getApiBaseUrl()}${path}`, {
+export async function requestApi(path, options = {}, { modeAware = true } = {}) {
+    const baseUrl = modeAware ? getApiBaseUrl() : getApiRoot();
+    const response = await fetch(`${baseUrl}${path}`, {
         ...options,
+        credentials: "same-origin",
         headers: { "Accept": "application/json", ...(options.headers ?? {}) },
     });
     const contentType = response.headers.get("content-type") ?? "";
