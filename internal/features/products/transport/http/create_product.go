@@ -47,7 +47,17 @@ func (h *ProductsHTTPHandler) CreateProduct(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	responseHandler.JSONResponse(product, http.StatusCreated)
+	resp := CreateProductResponse{
+		Id:            product.Id,
+		Name:          product.Name,
+		Description:   product.Description,
+		Price:         product.Price,
+		StockQuantity: product.StockQuantity,
+		CategoryId:    product.CategoryId,
+		ImageUrl:      product.ImageUrl,
+	}
+
+	responseHandler.JSONResponse(resp, http.StatusCreated)
 }
 
 func domainFromDTO(dto CreateProductRequest) domain.Product {
