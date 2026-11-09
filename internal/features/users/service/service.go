@@ -20,9 +20,9 @@ type UserRepository interface {
 	CreateUser(ctx context.Context, user domain.User) (domain.User, error)
 }
 
-func NewUserService(userRepository UserRepository, passHasher PasswordHasher) *UserService {
+func NewUserService(userRepository UserRepository, passwordHasher PasswordHasher) *UserService {
 	return &UserService{
 		userRepository: userRepository,
-		passwordHasher: passHasher,
+		passwordHasher: passwordHasher,
 	}
 }

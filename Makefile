@@ -44,7 +44,7 @@ migrate:
 	postgres-migrate \
 	create \
 	-ext sql \
-	-dir /migratio	ns \
+	-dir /migrations \
 	-seq "$(seq)"
 	
 migrate-up:

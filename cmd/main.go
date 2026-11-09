@@ -11,6 +11,10 @@ import (
 	products_postgres_vulnerable_repository "github.com/Phanile/go-secure-labs/internal/features/products/repository/postgres/vulnerable"
 	products_service "github.com/Phanile/go-secure-labs/internal/features/products/service"
 	products_transport_http "github.com/Phanile/go-secure-labs/internal/features/products/transport/http"
+	users_postgres_repository "github.com/Phanile/go-secure-labs/internal/features/users/repository/postgres"
+	users_service "github.com/Phanile/go-secure-labs/internal/features/users/service"
+	users_transport_http "github.com/Phanile/go-secure-labs/internal/features/users/transport"
+	"github.com/Phanile/go-secure-labs/internal/hasher"
 	"github.com/Phanile/go-secure-labs/internal/logger"
 	core_postgres_pool "github.com/Phanile/go-secure-labs/internal/repository/postgres/pool"
 	http_middleware "github.com/Phanile/go-secure-labs/internal/transport/http/middleware"
@@ -46,8 +50,12 @@ func main() {
 	productsRepository := products_postgres_repository.NewProductsRepository(pool)
 	productsVulnerableRepository := products_postgres_vulnerable_repository.NewProductsVulnerableRepository(pool)
 
+	userRepository := users_postgres_repository.NewUserRepository(pool)
+
 	productsService := products_service.NewProductsService(productsRepository)
 	productsVulnerableService := products_service.NewProductsService(productsVulnerableRepository)
+
+	userService := users_service.NewUserService(userRepository, hasher.SHA256Hasher{})
 
 	httpServer := http_server.NewHTTPServer(
 		http_server.NewConfigMust(),
@@ -61,9 +69,12 @@ func main() {
 	productsTransportHTTP := products_transport_http.NewProductsHTTPHandler(productsService)
 	productsVulnerableTransportHTTP := products_transport_http.NewProductsHTTPHandler(productsVulnerableService)
 
+	userTransportHTTP := users_transport_http.NewUserHTTPHandler(userService)
+
 	apiProductsRouter := http_server.NewAPIVersionRouter(http_server.APIVersion1)
 	apiProductsRouter.RegisterRoutes(productsTransportHTTP.Routes()...)
 	apiProductsRouter.RegisterRoutes(productsVulnerableTransportHTTP.VulnerableRoutes()...)
+	apiProductsRouter.RegisterRoutes(userTransportHTTP.Routes()...)
 
 	httpServer.RegisterAPIRouters(apiProductsRouter)
 	httpServer.RegisterStatic("/", "./web")

@@ -27,7 +27,7 @@ func (h *UserHTTPHandler) Routes() []http_server.Route {
 	return []http_server.Route{
 		{
 			Method:  http.MethodPost,
-			Path:    "/register",
+			Path:    "/users",
 			Handler: h.CreateUser,
 		},
 	}
