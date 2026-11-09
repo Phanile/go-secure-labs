@@ -17,9 +17,9 @@ type UserService interface {
 	CreateUser(ctx context.Context, createUserDTO dto.CreateUserDTO) (domain.User, error)
 }
 
-func NewUsersHTTPHandler(usersService UserService) *UserHTTPHandler {
+func NewUserHTTPHandler(userService UserService) *UserHTTPHandler {
 	return &UserHTTPHandler{
-		userService: usersService,
+		userService: userService,
 	}
 }
 
