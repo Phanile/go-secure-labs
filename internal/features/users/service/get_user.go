@@ -14,3 +14,12 @@ func (s *UserService) GetUserByEmail(ctx context.Context, email string) (domain.
 
 	return user, nil
 }
+
+func (s *UserService) GetUserById(ctx context.Context, id int64) (domain.User, error) {
+	user, err := s.userRepository.GetUserById(ctx, id)
+	if err != nil {
+		return domain.User{}, err
+	}
+
+	return user, nil
+}

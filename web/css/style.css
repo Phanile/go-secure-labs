@@ -148,6 +148,14 @@ a {
     cursor: pointer;
 }
 
+.auth-nav__account {
+    display: inline-block;
+    max-width: 190px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 .auth-nav__logout:hover {
     color: var(--text);
 }

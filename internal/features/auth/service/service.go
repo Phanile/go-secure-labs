@@ -17,10 +17,12 @@ type AuthService struct {
 type UserHandler interface {
 	CreateUser(ctx context.Context, createUserDTO dto.CreateUserDTO) (domain.User, error)
 	GetUserByEmail(ctx context.Context, email string) (domain.User, error)
+	GetUserById(ctx context.Context, id int64) (domain.User, error)
 }
 
 type SessionHandler interface {
 	CreateSession(ctx context.Context, session domain.Session) (domain.Session, error)
+	GetSessionByTokenHash(ctx context.Context, tokenHash string) (domain.Session, error)
 }
 
 type TokenHasher interface {

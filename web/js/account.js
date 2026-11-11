@@ -66,24 +66,21 @@ function pendingState() {
     return `<div class="account-state"><strong>Backend integration pending</strong><p>Этот раздел готов к подключению backend endpoint, но данные пока недоступны.</p></div>`;
 }
 
-function accountDashboard(data) {
-    const user = data.user ?? data;
-    const orders = data.recent_orders ?? data.orders ?? [];
-    return shell("Мой аккаунт", "Личная информация и последние заказы.", `<div class="account-summary"><article class="summary-card"><span>Email</span><strong>${esc(user.email ?? "Доступен после интеграции")}</strong></article><article class="summary-card"><span>Баланс</span><strong>${formatMoney(data.balance ?? user.balance)}</strong></article><article class="summary-card"><span>Заказов</span><strong>${data.orders_count ?? orders.length}</strong></article></div><div class="account-section"><div class="section-header"><h2 class="section-title">Последние заказы</h2><a class="secondary-button" href="#/orders">Все заказы</a></div>${orders.length ? orderList(orders.slice(0, 5)) : `<div class="empty-state">Заказов пока нет.</div>`}</div>`);
+function accountDashboard(user) {
+    return shell("Мой аккаунт", "Данные текущей session-сессии.", `<div class="account-summary account-summary--profile"><article class="summary-card"><span>User ID</span><strong>${esc(user.id)}</strong></article><article class="summary-card"><span>Email</span><strong>${esc(user.email)}</strong></article><article class="summary-card"><span>Role</span><strong>${esc(user.role)}</strong></article></div><div class="account-section"><div class="account-state account-state--success"><strong>Сессия активна</strong><p>Профиль получен через <code>GET /api/v1/auth/me</code>. Заказы и баланс будут добавлены позднее.</p></div></div>`);
 }
 
 function orderList(orders) {
     return `<div class="order-list">${orders.map((order) => `<a class="order-row" href="#/orders/${encodeURIComponent(order.id)}"><span><strong>#${esc(order.id)}</strong><small>${esc(formatDate(order.created_at ?? order.date))}</small></span><span><strong>${formatMoney(order.total ?? order.total_price)}</strong><small>${esc(order.status ?? "—")}</small></span></a>`).join("")}</div>`;
 }
 
-async function renderAccount() {
-    content.innerHTML = shell("Мой аккаунт", "Загрузка данных аккаунта.", loadingState());
-    try {
-        const response = await requestApi("/account", {}, { modeAware: false });
-        content.innerHTML = accountDashboard(response.body);
-    } catch (error) {
-        content.innerHTML = error instanceof Error && error.status === 404 ? shell("Мой аккаунт", "", pendingState()) : shell("Мой аккаунт", "", errorState(error));
+function renderAccount() {
+    const user = AuthState.current.user;
+    if (!user) {
+        content.innerHTML = shell("Мой аккаунт", "", loadingState());
+        return;
     }
+    content.innerHTML = accountDashboard(user);
 }
 
 async function renderOrders() {

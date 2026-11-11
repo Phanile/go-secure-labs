@@ -4,8 +4,8 @@ const listeners = new Set();
 const AUTH_ENDPOINTS = Object.freeze({
     login: "/auth/login",
     register: "/auth/register",
-    logout: "/auth/logout",
     currentUser: "/auth/me",
+    logout: "/auth/logout",
 });
 
 let state = { authenticated: false, user: null, loading: false };
@@ -36,6 +36,7 @@ export const AuthState = {
             }, { modeAware: false });
             state = { authenticated: true, user: normalizeUser(response.body), loading: false };
             notify();
+            await this.refreshUser();
             return response;
         } catch (error) {
             state = { ...state, loading: false };
@@ -54,11 +55,26 @@ export const AuthState = {
             }, { modeAware: false });
             state = { authenticated: true, user: normalizeUser(response.body), loading: false };
             notify();
+            await this.refreshUser();
             return response;
         } catch (error) {
             state = { ...state, loading: false };
             notify();
             throw error;
+        }
+    },
+    async refreshUser() {
+        try {
+            const response = await requestApi(AUTH_ENDPOINTS.currentUser, {}, { modeAware: false });
+            state = { authenticated: true, user: normalizeUser(response.body), loading: false };
+            notify();
+            return response.body;
+        } catch (error) {
+            if (error instanceof ApiError && error.status === 401) {
+                state = { authenticated: false, user: null, loading: false };
+                notify();
+            }
+            return null;
         }
     },
     async logout() {
@@ -72,7 +88,6 @@ export const AuthState = {
             state = { authenticated: true, user: normalizeUser(response.body), loading: false };
             notify();
         } catch (error) {
-            if (!(error instanceof ApiError) || ![401, 404].includes(error.status)) console.warn("Unable to restore session", error);
             state = { authenticated: false, user: null, loading: false };
             notify();
         }

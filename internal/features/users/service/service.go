@@ -19,6 +19,7 @@ type PasswordHasher interface {
 type UserRepository interface {
 	CreateUser(ctx context.Context, user domain.User) (domain.User, error)
 	GetUserByEmail(ctx context.Context, email string) (domain.User, error)
+	GetUserById(ctx context.Context, id int64) (domain.User, error)
 }
 
 func NewUserService(userRepository UserRepository, passwordHasher PasswordHasher) *UserService {

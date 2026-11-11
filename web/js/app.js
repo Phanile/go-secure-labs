@@ -13,6 +13,7 @@ const views = [...document.querySelectorAll("[data-view]")];
 const routeLinks = [...document.querySelectorAll("[data-route-link]")];
 const guestAuthLinks = document.getElementById("guest-auth-links");
 const userAuthLinks = document.getElementById("user-auth-links");
+const accountNavLink = document.getElementById("account-nav-link");
 const logoutButton = document.getElementById("logout-button");
 
 function updateModeControls(mode) {
@@ -38,6 +39,8 @@ AppMode.subscribe((mode) => {
 function updateAuthNavigation(authState) {
     guestAuthLinks.classList.toggle("hidden", authState.authenticated);
     userAuthLinks.classList.toggle("hidden", !authState.authenticated);
+    accountNavLink.textContent = authState.user?.email || "Мой аккаунт";
+    accountNavLink.title = authState.user?.email || "Мой аккаунт";
 }
 
 AuthState.subscribe((authState) => {

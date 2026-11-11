@@ -22,6 +22,17 @@ export class ApiError extends Error {
     }
 }
 
+async function readResponseBody(response) {
+    const rawBody = await response.text();
+    if (rawBody.trim() === "") return null;
+
+    try {
+        return JSON.parse(rawBody);
+    } catch {
+        return rawBody;
+    }
+}
+
 export async function requestApi(path, options = {}, { modeAware = true } = {}) {
     const baseUrl = modeAware ? getApiBaseUrl() : getApiRoot();
     const response = await fetch(`${baseUrl}${path}`, {
@@ -29,10 +40,7 @@ export async function requestApi(path, options = {}, { modeAware = true } = {}) 
         credentials: "same-origin",
         headers: { "Accept": "application/json", ...(options.headers ?? {}) },
     });
-    const contentType = response.headers.get("content-type") ?? "";
-    const body = contentType.includes("application/json")
-        ? await response.json()
-        : await response.text();
+    const body = await readResponseBody(response);
     if (!response.ok) throw new ApiError(`API request failed: ${response.status}`, response.status, body);
     return { status: response.status, headers: response.headers, body };
 }

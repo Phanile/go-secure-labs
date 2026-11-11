@@ -7,4 +7,6 @@ var (
 	ErrInvalidArgument  = errors.New("invalid argument")
 	ErrConflict         = errors.New("conflict")
 	ErrPasswordMismatch = errors.New("password mismatch")
+	ErrUnauthorized     = errors.New("unauthorized")
+	ErrTokenExpired     = errors.New("token expired")
 )
