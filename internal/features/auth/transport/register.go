@@ -13,7 +13,7 @@ import (
 type RegisterRequest struct {
 	Email          string `json:"email"           validate:"required,email"`
 	Password       string `json:"password"        validate:"required"`
-	RepeatPassword string `json:"repeat_password" validate:"required"`
+	RepeatPassword string `json:"password_confirmation" validate:"required"`
 }
 
 type RegisterResponse struct {

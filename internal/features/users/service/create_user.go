@@ -16,8 +16,7 @@ func (s *UserService) CreateUser(ctx context.Context, createUserDTO dto.CreateUs
 		return domain.User{}, fmt.Errorf("failed to hash password: %w", err)
 	}
 
-	uninitializedUser := domain.NewUserUninitialized(createUserDTO.Email, hashedPassword)
-	uninitializedUser.Role = DefaultUserRole
+	uninitializedUser := domain.NewUserUninitialized(createUserDTO.Email, hashedPassword, DefaultUserRole)
 	user, err := s.userRepository.CreateUser(ctx, uninitializedUser)
 
 	if err != nil {

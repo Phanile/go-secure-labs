@@ -27,12 +27,12 @@ func NewUser(id int64, email, passwordHash, role string) User {
 	}
 }
 
-func NewUserUninitialized(email, passwordHash string) User {
+func NewUserUninitialized(email, passwordHash, role string) User {
 	return User{
 		Id:           UninitializedID,
 		Email:        email,
 		PasswordHash: passwordHash,
-		Role:         "",
+		Role:         role,
 		CreatedAt:    time.Now(),
 		UpdatedAt:    time.Now(),
 	}

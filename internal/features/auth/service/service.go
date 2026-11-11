@@ -8,21 +8,36 @@ import (
 )
 
 type AuthService struct {
-	userCreator    UserCreator
-	sessionCreator SessionCreator
+	userHandler    UserHandler
+	sessionHandler SessionHandler
+	tokenHasher    TokenHasher
+	passwordHasher PasswordHasher
 }
 
-type UserCreator interface {
+type UserHandler interface {
 	CreateUser(ctx context.Context, createUserDTO dto.CreateUserDTO) (domain.User, error)
+	GetUserByEmail(ctx context.Context, email string) (domain.User, error)
 }
 
-type SessionCreator interface {
-	CreateSession(ctx context.Context, userId int64) (domain.Session, error)
+type SessionHandler interface {
+	CreateSession(ctx context.Context, session domain.Session) (domain.Session, error)
 }
 
-func NewAuthService(userCreator UserCreator, sessionCreator SessionCreator) *AuthService {
+type TokenHasher interface {
+	Hash(token string) (string, error)
+	Compare(token, hash string) (bool, error)
+}
+
+type PasswordHasher interface {
+	Hash(password string) (string, error)
+	Compare(password, hash string) (bool, error)
+}
+
+func NewAuthService(userHandler UserHandler, sessionHandler SessionHandler, tokenHasher TokenHasher, passwordHasher PasswordHasher) *AuthService {
 	return &AuthService{
-		userCreator:    userCreator,
-		sessionCreator: sessionCreator,
+		userHandler:    userHandler,
+		sessionHandler: sessionHandler,
+		tokenHasher:    tokenHasher,
+		passwordHasher: passwordHasher,
 	}
 }

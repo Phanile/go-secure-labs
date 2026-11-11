@@ -2,10 +2,10 @@ import { ApiError, requestApi } from "./api.js";
 
 const listeners = new Set();
 const AUTH_ENDPOINTS = Object.freeze({
-    login: "/login",
-    register: "/register",
-    logout: "/logout",
-    currentUser: "/me",
+    login: "/auth/login",
+    register: "/auth/register",
+    logout: "/auth/logout",
+    currentUser: "/auth/me",
 });
 
 let state = { authenticated: false, user: null, loading: false };

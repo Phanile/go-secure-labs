@@ -7,6 +7,9 @@ import (
 	"os/signal"
 	"syscall"
 
+	auth_postgres_repository "github.com/Phanile/go-secure-labs/internal/features/auth/repository/postgres"
+	auth_service "github.com/Phanile/go-secure-labs/internal/features/auth/service"
+	auth_transport_http "github.com/Phanile/go-secure-labs/internal/features/auth/transport"
 	products_postgres_repository "github.com/Phanile/go-secure-labs/internal/features/products/repository/postgres"
 	products_postgres_vulnerable_repository "github.com/Phanile/go-secure-labs/internal/features/products/repository/postgres/vulnerable"
 	products_service "github.com/Phanile/go-secure-labs/internal/features/products/service"
@@ -52,10 +55,14 @@ func main() {
 
 	userRepository := users_postgres_repository.NewUserRepository(pool)
 
+	authRepository := auth_postgres_repository.NewAuthRepository(pool)
+
 	productsService := products_service.NewProductsService(productsRepository)
 	productsVulnerableService := products_service.NewProductsService(productsVulnerableRepository)
 
 	userService := users_service.NewUserService(userRepository, hasher.SHA256Hasher{})
+
+	authService := auth_service.NewAuthService(userService, authRepository, hasher.SHA256Hasher{}, hasher.SHA256Hasher{})
 
 	httpServer := http_server.NewHTTPServer(
 		http_server.NewConfigMust(),
@@ -71,10 +78,13 @@ func main() {
 
 	userTransportHTTP := users_transport_http.NewUserHTTPHandler(userService)
 
+	authTransportHTTP := auth_transport_http.NewAuthHTTPHandler(authService)
+
 	apiProductsRouter := http_server.NewAPIVersionRouter(http_server.APIVersion1)
 	apiProductsRouter.RegisterRoutes(productsTransportHTTP.Routes()...)
 	apiProductsRouter.RegisterRoutes(productsVulnerableTransportHTTP.VulnerableRoutes()...)
 	apiProductsRouter.RegisterRoutes(userTransportHTTP.Routes()...)
+	apiProductsRouter.RegisterRoutes(authTransportHTTP.Routes()...)
 
 	httpServer.RegisterAPIRouters(apiProductsRouter)
 	httpServer.RegisterStatic("/", "./web")
