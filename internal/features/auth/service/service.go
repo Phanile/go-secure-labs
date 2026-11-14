@@ -23,6 +23,7 @@ type UserHandler interface {
 type SessionHandler interface {
 	CreateSession(ctx context.Context, session domain.Session) (domain.Session, error)
 	GetSessionByTokenHash(ctx context.Context, tokenHash string) (domain.Session, error)
+	DeleteSessionByUserId(ctx context.Context, userId int64) error
 }
 
 type TokenHasher interface {

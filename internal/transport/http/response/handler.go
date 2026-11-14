@@ -24,6 +24,7 @@ func NewHTTPResponseHandler(l *logger.Logger, w http.ResponseWriter) *HTTPRespon
 }
 
 func (h *HTTPResponseHandler) JSONResponse(responseBody any, statusCode int) {
+	h.w.Header().Set("Content-Type", "application/json")
 	h.w.WriteHeader(statusCode)
 
 	if err := json.NewEncoder(h.w).Encode(responseBody); err != nil {
@@ -84,6 +85,10 @@ func (h *HTTPResponseHandler) errorResponse(
 	statusCode int,
 	err error,
 ) {
+	if err == nil {
+		err = errors.New(msg)
+	}
+
 	response := map[string]string{
 		"message": msg,
 		"error":   err.Error(),

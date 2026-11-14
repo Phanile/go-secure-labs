@@ -17,6 +17,7 @@ type AuthService interface {
 	Register(ctx context.Context, createUserDTO dto.CreateUserDTO) (domain.User, domain.Session, error)
 	Login(ctx context.Context, loginUserDTO dto.LoginUserDTO) (domain.User, domain.Session, error)
 	Me(ctx context.Context, userId int64) (domain.User, error)
+	Logout(ctx context.Context, userId int64) error
 }
 
 func NewAuthHTTPHandler(authService AuthService) *AuthHTTPHandler {
@@ -41,6 +42,11 @@ func (h *AuthHTTPHandler) Routes() []http_server.Route {
 			Method:  http.MethodGet,
 			Path:    "/auth/me",
 			Handler: h.Me,
+		},
+		{
+			Method:  http.MethodPost,
+			Path:    "/auth/logout",
+			Handler: h.Logout,
 		},
 	}
 }

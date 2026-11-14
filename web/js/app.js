@@ -44,10 +44,15 @@ function updateAuthNavigation(authState) {
     accountNavLink.title = authState.user?.email || "Мой аккаунт";
 }
 
+function renderProtectedRoute(route) {
+    renderUserRoute(route);
+    if (route.section === "cart" && AuthState.current.authenticated) renderCart();
+}
+
 AuthState.subscribe((authState) => {
     updateAuthNavigation(authState);
     const route = getRoute();
-    if (["login", "register", "account", "order", "balance"].includes(route.section)) renderUserRoute(route);
+    if (["login", "register", "account", "order", "balance", "cart"].includes(route.section)) renderProtectedRoute(route);
 });
 
 logoutButton.addEventListener("click", async () => {
@@ -86,8 +91,7 @@ function navigate() {
     document.querySelector(".products-search").classList.toggle("hidden", !showSearch);
     if (section === "labs") renderLabs(route.labId);
     if (section === "portswigger") renderPortSwigger(route.topicSlug);
-    if (userSections.includes(section)) renderUserRoute(route);
-    if (section === "cart") renderCart();
+    if (userSections.includes(section)) renderProtectedRoute(route);
     if (showSearch) loadProducts(searchInput.value);
 }
 
