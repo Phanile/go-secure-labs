@@ -1,4 +1,5 @@
 import { fetchProducts } from "./api.js";
+import { addToCart } from "./cart.js";
 
 const productsContainer = document.getElementById("products");
 const loadingElement = document.getElementById("products-loading");
@@ -42,7 +43,7 @@ function createProductCard(product) {
     button.className = "product-card__button";
     button.type = "button";
     button.textContent = "В корзину";
-    button.addEventListener("click", () => console.log("Add product to cart:", product.id));
+    button.addEventListener("click", () => { addToCart(product); button.textContent = "Добавлено"; setTimeout(() => { button.textContent = "В корзину"; }, 900); });
 
     footer.append(price, button);
     content.append(name, description, footer);

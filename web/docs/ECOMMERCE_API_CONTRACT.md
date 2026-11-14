@@ -1,6 +1,6 @@
 # AppleShop e-commerce frontend API contract
 
-The current Go backend exposes product endpoints only. The account-related routes below are frontend integration contracts for future backend implementation. All requests use same-origin cookies (`credentials: "same-origin"`); the frontend does not store passwords, session IDs, JWTs, or other credentials in `localStorage`.
+The Go backend exposes product, authentication, and order endpoints. Account balance remains a future integration contract. The shopping basket is stored in browser `localStorage`; order prices and inventory are recalculated by the backend. All requests use same-origin cookies (`credentials: "same-origin"`); the frontend does not store passwords, session IDs, JWTs, or other credentials in `localStorage`.
 
 ## Existing endpoint
 
@@ -100,8 +100,9 @@ Success: `200` with an array or `{ "orders": [] }`:
   {
     "id": 42,
     "created_at": "2026-11-03T10:00:00Z",
-    "status": "paid",
-    "total": 99900
+    "status": "pending",
+    "total_price": 99900,
+    "address_id": 1
   }
 ]
 ```
@@ -116,8 +117,9 @@ Success: `200` with an order or `{ "order": { ... } }`:
 {
   "id": 42,
   "created_at": "2026-11-03T10:00:00Z",
-  "status": "paid",
-  "total": 99900,
+  "status": "pending",
+  "total_price": 99900,
+  "address_id": 1,
   "items": [
     {
       "product_id": 1,
@@ -130,6 +132,28 @@ Success: `200` with an order or `{ "order": { ... } }`:
 ```
 
 Errors: `401`, `403`, `404`, `500`.
+
+### `POST /api/v1/orders`
+
+Requires an authenticated session and an address owned by the current user. The browser sends product IDs and quantities only; the server reads current prices, checks stock, creates the order and items in a transaction, and decrements inventory.
+
+```json
+{
+  "address": {
+    "country": "Россия",
+    "city": "Москва",
+    "street": "Тверская",
+    "house": "1",
+    "apartment": "10",
+    "postal_code": "125009"
+  },
+  "items": [{ "product_id": 1, "quantity": 2 }]
+}
+```
+
+Success: `201` with the created order. Errors: `400` invalid input or insufficient stock, `401`, `404` missing product/address, `500`.
+
+Vulnerable-mode reads use `GET /api/v1/vulnerable/orders` and `GET /api/v1/vulnerable/orders/{id}` and intentionally omit ownership filtering for the access-control lab.
 
 ## Frontend behavior when routes are unavailable
 

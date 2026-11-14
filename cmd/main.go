@@ -10,6 +10,9 @@ import (
 	auth_postgres_repository "github.com/Phanile/go-secure-labs/internal/features/auth/repository/postgres"
 	auth_service "github.com/Phanile/go-secure-labs/internal/features/auth/service"
 	auth_transport_http "github.com/Phanile/go-secure-labs/internal/features/auth/transport"
+	orders_postgres_repository "github.com/Phanile/go-secure-labs/internal/features/orders/repository/postgres"
+	orders_service "github.com/Phanile/go-secure-labs/internal/features/orders/service"
+	orders_transport_http "github.com/Phanile/go-secure-labs/internal/features/orders/transport/http"
 	products_postgres_repository "github.com/Phanile/go-secure-labs/internal/features/products/repository/postgres"
 	products_postgres_vulnerable_repository "github.com/Phanile/go-secure-labs/internal/features/products/repository/postgres/vulnerable"
 	products_service "github.com/Phanile/go-secure-labs/internal/features/products/service"
@@ -58,6 +61,7 @@ func main() {
 
 	productsService := products_service.NewProductsService(productsRepository)
 	productsVulnerableService := products_service.NewProductsService(productsVulnerableRepository)
+	ordersService := orders_service.New(orders_postgres_repository.New(pool))
 
 	userService := users_service.NewUserService(userRepository, hasher.SHA256Hasher{})
 
@@ -77,11 +81,14 @@ func main() {
 	productsVulnerableTransportHTTP := products_transport_http.NewProductsHTTPHandler(productsVulnerableService)
 
 	authTransportHTTP := auth_transport_http.NewAuthHTTPHandler(authService)
+	ordersTransportHTTP := orders_transport_http.New(ordersService)
 
 	apiProductsRouter := http_server.NewAPIVersionRouter(http_server.APIVersion1)
 	apiProductsRouter.RegisterRoutes(productsTransportHTTP.Routes()...)
 	apiProductsRouter.RegisterRoutes(productsVulnerableTransportHTTP.VulnerableRoutes()...)
 	apiProductsRouter.RegisterRoutes(authTransportHTTP.Routes()...)
+	apiProductsRouter.RegisterRoutes(ordersTransportHTTP.Routes()...)
+	apiProductsRouter.RegisterRoutes(ordersTransportHTTP.VulnerableRoutes()...)
 
 	httpServer.RegisterAPIRouters(apiProductsRouter)
 	httpServer.RegisterStatic("/", "./web")

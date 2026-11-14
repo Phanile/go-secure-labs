@@ -66,38 +66,37 @@ function pendingState() {
     return `<div class="account-state"><strong>Backend integration pending</strong><p>Этот раздел готов к подключению backend endpoint, но данные пока недоступны.</p></div>`;
 }
 
-function accountDashboard(user) {
-    return shell("Мой аккаунт", "Данные текущей session-сессии.", `<div class="account-summary account-summary--profile"><article class="summary-card"><span>User ID</span><strong>${esc(user.id)}</strong></article><article class="summary-card"><span>Email</span><strong>${esc(user.email)}</strong></article><article class="summary-card"><span>Role</span><strong>${esc(user.role)}</strong></article></div><div class="account-section"><div class="account-state account-state--success"><strong>Сессия активна</strong><p>Профиль получен через <code>GET /api/v1/auth/me</code>. Заказы и баланс будут добавлены позднее.</p></div></div>`);
+function accountDashboard(user, ordersSection) {
+    return shell("Мой аккаунт", "Данные текущей session-сессии.", `<div class="account-summary account-summary--profile"><article class="summary-card"><span>User ID</span><strong>${esc(user.id)}</strong></article><article class="summary-card"><span>Email</span><strong>${esc(user.email)}</strong></article><article class="summary-card"><span>Role</span><strong>${esc(user.role)}</strong></article></div><div class="account-section"><div class="account-state account-state--success"><strong>Сессия активна</strong><p>Профиль получен через <code>GET /api/v1/auth/me</code>.</p></div><h2 class="account-orders-title">Мои заказы</h2>${ordersSection}</div>`);
 }
 
 function orderList(orders) {
     return `<div class="order-list">${orders.map((order) => `<a class="order-row" href="#/orders/${encodeURIComponent(order.id)}"><span><strong>#${esc(order.id)}</strong><small>${esc(formatDate(order.created_at ?? order.date))}</small></span><span><strong>${formatMoney(order.total ?? order.total_price)}</strong><small>${esc(order.status ?? "—")}</small></span></a>`).join("")}</div>`;
 }
 
-function renderAccount() {
+async function renderAccount() {
     const user = AuthState.current.user;
     if (!user) {
         content.innerHTML = shell("Мой аккаунт", "", loadingState());
         return;
     }
-    content.innerHTML = accountDashboard(user);
-}
-
-async function renderOrders() {
-    content.innerHTML = shell("Мои заказы", "История заказов аккаунта.", loadingState());
+    content.innerHTML = accountDashboard(user, `<div class="account-state">Загрузка заказов…</div>`);
     try {
-        const response = await requestApi("/orders", {}, { modeAware: false });
+        const response = await requestApi("/orders");
         const orders = Array.isArray(response.body) ? response.body : response.body.orders ?? [];
-        content.innerHTML = shell("Мои заказы", "История заказов аккаунта.", orders.length ? orderList(orders) : `<div class="empty-state">Заказов пока нет.</div>`);
+        if (window.location.hash !== "#/account") return;
+        content.innerHTML = accountDashboard(user, orders.length ? orderList(orders) : `<div class="empty-state">Заказов пока нет.</div>`);
     } catch (error) {
-        content.innerHTML = error instanceof Error && error.status === 404 ? shell("Мои заказы", "", pendingState()) : shell("Мои заказы", "", errorState(error));
+        if (window.location.hash !== "#/account") return;
+        const state = error instanceof Error && error.status === 404 ? pendingState() : errorState(error);
+        content.innerHTML = accountDashboard(user, state);
     }
 }
 
 async function renderOrder(orderId) {
     content.innerHTML = shell(`Заказ #${orderId}`, "Загрузка деталей заказа.", loadingState());
     try {
-        const response = await requestApi(`/orders/${encodeURIComponent(orderId)}`, {}, { modeAware: false });
+        const response = await requestApi(`/orders/${encodeURIComponent(orderId)}`);
         const order = response.body.order ?? response.body;
         const items = order.items ?? order.products ?? [];
         content.innerHTML = shell(`Заказ #${order.id ?? orderId}`, "", `<div class="order-detail"><div class="order-detail__meta"><span>Дата<strong>${esc(formatDate(order.created_at ?? order.date))}</strong></span><span>Статус<strong>${esc(order.status ?? "—")}</strong></span><span>Итого<strong>${formatMoney(order.total ?? order.total_price)}</strong></span></div><h2>Товары</h2>${items.length ? `<div class="order-items">${items.map((item) => `<div class="order-item"><span>${esc(item.name ?? `Product #${item.product_id}`)}</span><span>${esc(item.quantity)} × ${formatMoney(item.unit_price ?? item.price)}</span></div>`).join("")}</div>` : `<div class="empty-state">В заказе нет товаров.</div>`}</div>`);
@@ -129,7 +128,6 @@ export function renderUserRoute(route) {
         return;
     }
     if (route.section === "account") renderAccount();
-    else if (route.section === "orders") renderOrders();
     else if (route.section === "order") renderOrder(route.id);
     else if (route.section === "balance") renderBalance();
 }

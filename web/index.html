@@ -52,6 +52,7 @@
         </nav>
 
         <nav class="auth-nav" id="auth-navigation" aria-label="Account navigation">
+            <a href="#/cart" class="nav__link" data-route-link="cart">Корзина <span id="cart-count">0</span></a>
             <span id="guest-auth-links" class="auth-nav__group">
                 <a href="#/login" class="nav__link" data-route-link="login">Войти</a>
                 <a href="#/register" class="nav__link" data-route-link="register">Регистрация</a>
@@ -145,9 +146,10 @@
         </div>
     </section>
 
-    <section class="user-view hidden" id="user-view" data-view="login register account orders order balance">
+    <section class="user-view hidden" id="user-view" data-view="login register account order balance">
         <div class="container" id="user-content"></div>
     </section>
+    <section class="user-view hidden" id="cart-view" data-view="cart"><div class="container" id="cart-content"></div></section>
 
 </main>
 
